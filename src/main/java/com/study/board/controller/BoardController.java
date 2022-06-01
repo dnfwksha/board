@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class BoardController {
@@ -23,13 +24,14 @@ public class BoardController {
     }
 
     @PostMapping("/board/writepro")
-    public String boardWritePro(Board board){
+    public String boardWritePro(Board board, Model model, MultipartFile file) throws Exception{
 
-//        System.out.println(board.getTitle());
-//        System.out.println(board.getContent());
-        boardService.write(board);
+        boardService.write(board,file);
 
-        return "";
+        model.addAttribute("message", "글 작성이 완료되었습니다.");
+        model.addAttribute("searchUrl", "/board/list");
+
+        return "message";
     }
 
     @GetMapping("/board/list")
@@ -65,14 +67,14 @@ public class BoardController {
     }
 
     @PostMapping("/board/update/{id}")
-    public String boardUpdate(@PathVariable("id") Integer id, Board board){
+    public String boardUpdate(@PathVariable("id") Integer id, Board board, MultipartFile file) throws Exception {
 
-       Board boardtemp = boardService.boardView(id);
-       boardtemp.setTitle(board.getTitle());
-       boardtemp.setContent(board.getContent());
+        Board boardtemp = boardService.boardView(id);
+        boardtemp.setTitle(board.getTitle());
+        boardtemp.setContent(board.getContent());
 
-        boardService.write(boardtemp);
+        boardService.write(boardtemp, file);
 
-       return "redirect:/board/list";
+        return "redirect:/board/list";
     }
 }
