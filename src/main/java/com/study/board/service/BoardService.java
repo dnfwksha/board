@@ -4,6 +4,8 @@ import com.study.board.entity.Board;
 import com.study.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,9 +38,14 @@ public class BoardService {
         boardRepository.save(board);
     }
     //게시글 리스트 처리
-    public List<Board> boardList(){
+    public Page<Board> boardList(Pageable pageable){
 
-        return boardRepository.findAll();
+        return boardRepository.findAll(pageable);
+    }
+
+    public Page<Board> boardSearchList(String searchKeyword, Pageable pageable) {
+
+        return boardRepository.findByTitleContaining(searchKeyword, pageable);
     }
 
     //특정 게시글 불러오기
